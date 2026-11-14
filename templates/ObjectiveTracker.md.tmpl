@@ -1,0 +1,47 @@
+# Objective Tracker: {{exam_name}} ({{exam_code}})
+
+The exam guide outline as a checklist. One row per study session; big objectives are split into a/b sessions. Updated at each close-out (see `petey/method.md`).
+
+**Status:** ⬜ not started · 🔵 in progress (paused, see Resume note) · 🟡 taught, but quiz < 6/7 or an unresolved 🔥 · ✅ quiz ≥ 6/7 and no unresolved 🔥
+**Quiz (/7)** = score on the 7 questions for that objective (add `(+N/3 interleaved)` for the other 3). **🔥** = confident-wrong count in that session.
+**Prior misses** = MissLog entries already touching this objective (from a baseline, if any).
+**Hands-on** (optional) = a short task done for this objective. It doesn't affect status.
+
+## Daily schedule
+
+{{schedule_summary}}
+
+| Date | Session(s) | Notes |
+|---|---|---|
+{{schedule_rows}}
+
+## Are we on track?
+
+There's no early signal that predicts the real exam. These are leading indicators, checked at the end of each domain, with what to change if one goes red.
+
+| Signal | How it's measured | Healthy | If not healthy, adjust by… |
+|---|---|---|---|
+| **Retention** | Warm-up hit rate on MissLog items reviewed 3+ days after last seen | ≥ 75% | Shorter intervals; more free-recall warm-ups; a mini review session |
+| **Transfer** | Score on the 3 interleaved questions per quiz | ≥ 2/3 on average | Revisit 🟡 objectives before moving on |
+| **Calibration** | Accuracy of answers given at confidence 3; count of 🔥 | ≥ 90%, few 🔥 | Slow down; name the qualifiers before reading the options |
+| **Independent check** | A mock after each domain, scored on taught objectives only | ≥ 80% on taught objectives, not falling | Style gap → more scenario practice; content gap → re-teach |
+| **Reading slips** | Misses where the knowledge was right but a qualifier was missed, or the wrong letter was entered. Tally: (none yet) | Trending to 0 | Qualifier-first habit; answer as letter + 2-3 word reason |
+| **Pace** | Sessions done vs the Daily schedule | On schedule or ahead | Merge light objectives; use the buffer |
+
+| Checkpoint | Date | Retention | Transfer | Calibration | Independent check | Verdict |
+|---|---|---|---|---|---|---|
+{{checkpoint_rows}}
+
+## Mock exams
+
+Full-length practice exams, scored by official objective (taught / untaught / doubtful key, checked against the docs). Scores as `n/N`. `petey/build_game.py` reads this table.
+
+| Mock | Planned | Taken | Overall | Taught | Untaught | Notes |
+|---|---|---|---|---|---|---|
+{{mock_rows}}
+
+## Resume note
+
+(empty)
+
+{{domain_sections}}

@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example Cloud Fundamentals progress · Petey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap">
+<style>
+/* Layout: header + Petey line, 4 figures, timeline, domain x objective heatmap, weakest list + detail panel. */
+:root {
+  --bg: #f5f8fb; --panel: #ffffff; --fg: #14202b; --muted: #5b6b79; --line: #d9e2ea;
+  --accent: #1f7fbf;
+  --s0: #e4eaf0;            /* not started */
+  --weak: #d9534f; --mid: #e9a23b; --ok: #8cc56b; --strong: #2e9d5b;
+  --display: "Fraunces", Georgia, serif;
+  --body: "IBM Plex Sans", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e1620; --panel: #16212d; --fg: #e3ebf2; --muted: #93a4b3; --line: #273645;
+  --accent: #56b0ea; --s0: #223140;
+  --weak: #e0605b; --mid: #e3a64a; --ok: #7fb862; --strong: #3fae6c; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0e1620; --panel: #16212d; --fg: #e3ebf2; --muted: #93a4b3; --line: #273645;
+  --accent: #56b0ea; --s0: #223140;
+  --weak: #e0605b; --mid: #e3a64a; --ok: #7fb862; --strong: #3fae6c; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 var(--body); }
+.wrap { max-width: 1180px; margin-inline: auto; padding-block: 28px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 24px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--muted); font: 500 .8rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+.brand .mark { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: var(--accent); color: #fff; font: 600 .78rem/1 var(--mono); letter-spacing: 0; }
+.sample { display: inline-block; margin-left: 6px; padding: 2px 8px; border-radius: 99px; background: var(--mid); color: #10202c; font: 600 .7rem/1.4 var(--mono); }
+header h1 { font: 600 clamp(1.6rem, 3.5vw, 2.2rem)/1.15 var(--display); margin: 0; text-wrap: balance; }
+header p { margin: 4px 0 0; color: var(--muted); max-width: 70ch; }
+.says { margin-top: 12px; padding: 10px 14px; border-left: 3px solid var(--accent); background: var(--panel); border-radius: 0 8px 8px 0; max-width: 80ch; }
+.says b { font-weight: 600; }
+.figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 12px; }
+.fig { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.fig .v { font: 400 2rem/1.1 var(--display); font-variant-numeric: tabular-nums; }
+.fig .l { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
+.fig .n { color: var(--muted); font-size: .85rem; margin-top: 2px; }
+section h2 { font: 500 1.1rem/1.3 var(--body); margin: 0 0 4px; }
+section > p.note { color: var(--muted); margin: 0 0 12px; font-size: .9rem; max-width: 80ch; }
+.matrix { display: grid; gap: 10px; }
+.drow { display: grid; grid-template-columns: minmax(9rem, 15rem) 1fr; gap: 12px; align-items: stretch; }
+.dlabel { padding: 8px 0; min-width: 0; }
+.dlabel b { display: block; font-weight: 600; }
+.dlabel span { color: var(--muted); font-size: .82rem; }
+.cells { display: grid; grid-template-columns: repeat(auto-fill, minmax(6.2rem, 1fr)); gap: 6px; }
+.cell { border: 0; border-radius: 8px; padding: 8px 10px; text-align: left; cursor: pointer; min-height: 74px;
+  font: inherit; color: #10202c; display: grid; align-content: space-between; gap: 4px; position: relative; }
+.cell:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.cell.sel { outline: 3px solid var(--fg); outline-offset: 2px; }
+.cell .id { font: 600 1rem/1 var(--mono); }
+.cell .sc { font: 500 .78rem/1.2 var(--mono); opacity: .85; }
+.cell .top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 6px; }
+.cell .badge { font: 500 .72rem/1 var(--mono); white-space: nowrap; }
+.cell.todo { background: var(--s0); color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .82rem; color: var(--muted); margin-top: 12px; }
+.legend i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; vertical-align: -2px; margin-right: 6px; }
+.detail { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: grid; gap: 12px; }
+.detail h3 { margin: 0; font: 600 1.2rem/1.3 var(--display); }
+.kv { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: .9rem; }
+.kv span { color: var(--muted); }
+.items { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; max-height: 320px; overflow: auto; }
+.items li { display: grid; grid-template-columns: 4.5rem 1fr; gap: 10px; font-size: .9rem; padding: 4px 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.items li em { font-style: normal; font-family: var(--mono); font-size: .76rem; color: var(--muted); }
+.items li.due em { color: var(--mid); }
+.items li.fire em { color: var(--weak); }
+.weakest { display: grid; gap: 6px; }
+.bar { display: grid; grid-template-columns: 3.4rem 1fr 3rem; gap: 10px; align-items: center; font-size: .88rem; }
+.bar .track { height: 10px; background: var(--s0); border-radius: 99px; overflow: hidden; }
+.bar .fill { height: 100%; border-radius: 99px; }
+.bar b { font-family: var(--mono); font-weight: 500; }
+.bar span:last-child { font-family: var(--mono); text-align: right; color: var(--muted); }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 24px; align-items: start; }
+.pace { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 12px; }
+.pace .verdict { font-size: .92rem; }
+.pace .verdict b { font-weight: 600; }
+.tl { position: relative; padding-top: 30px; padding-bottom: 34px; }
+.tl .bar { position: relative; height: 26px; background: var(--s0); border-radius: 6px; display: block; }
+.tl .seg { position: absolute; top: 0; bottom: 0; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+  font: 500 .72rem/1 var(--mono); color: #10202c; overflow: hidden; white-space: nowrap; border-right: 2px solid var(--panel); }
+.seg.domain, .k-domain { background: color-mix(in srgb, var(--accent) 45%, var(--panel)); }
+.seg.domain.done, .k-done { background: var(--accent); color: #fff; }
+.seg.mocks, .k-mocks { background: color-mix(in srgb, var(--mid) 70%, var(--panel)); }
+.seg.buffer, .k-buffer { background: color-mix(in srgb, var(--mid) 35%, var(--panel)); }
+.seg.light, .k-light { background: color-mix(in srgb, var(--ok) 45%, var(--panel)); }
+.seg.phase, .k-phase { background: color-mix(in srgb, var(--muted) 35%, var(--panel)); }
+.tl .pin { position: absolute; top: 0; bottom: 0; width: 0; }
+.tl .pin::before { content: ""; position: absolute; top: 22px; bottom: 28px; left: -1px; width: 2px; background: var(--fg); }
+.tl .pin span { position: absolute; left: 0; transform: translateX(-50%); font: 500 .74rem/1.2 var(--body); white-space: nowrap; }
+.tl .pin.today span { top: 0; }
+.tl .pin.content::before { background: var(--strong); top: 30px; bottom: 22px; width: 3px; }
+.tl .pin.content.behind::before { background: var(--weak); }
+.tl .pin.content span { bottom: 0; color: var(--muted); }
+.tl .ends { display: flex; justify-content: space-between; color: var(--muted); font-size: .76rem; margin-top: 4px; }
+.tl .ends span:last-child { text-align: right; }
+.tlkey { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--muted); font-size: .8rem; }
+.tlkey i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 6px; }
+footer { color: var(--muted); font-size: .8rem; }
+@media (max-width: 560px) { .drow { grid-template-columns: 1fr; gap: 4px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand"><span class="mark">PT</span><span>Petey · Cert PT</span><span id="sample"></span></div>
+    <h1 id="h1"></h1>
+    <p id="takeaway"></p>
+    <div class="says" id="says" hidden></div>
+  </header>
+
+  <div class="figs" id="figs"></div>
+
+  <section class="pace" id="pace" aria-label="Timeline: plan versus progress"></section>
+
+  <section>
+    <h2>Strength by objective</h2>
+    <p class="note">Each cell is one study session. Colour = 60% quiz score + 40% MissLog retention (share of that objective's misses now ✅ solid; 🔁 counts half). An open 🔥 caps it at amber. Grey = not taught yet; the corner number is misses already logged. Click a cell for detail.</p>
+    <div class="matrix" id="matrix"></div>
+    <div class="legend">
+      <span><i style="background:var(--strong)"></i>Strong 85+</span>
+      <span><i style="background:var(--ok)"></i>OK 70–84</span>
+      <span><i style="background:var(--mid)"></i>Shaky 55–69</span>
+      <span><i style="background:var(--weak)"></i>Weak &lt;55</span>
+      <span><i style="background:var(--s0)"></i>Not started</span>
+    </div>
+  </section>
+
+  <div class="two">
+    <section>
+      <h2>Weakest taught objectives</h2>
+      <p class="note">Lowest strength first: where to aim warm-ups and mock-phase review.</p>
+      <div class="weakest" id="weakest"></div>
+    </section>
+    <section class="detail" id="detail" aria-live="polite"></section>
+  </div>
+
+  <footer>Snapshot built Sat 14 Nov 2026, 11:28 from ObjectiveTracker.md and MissLog.md by Cert PT. Re-run <code>python petey/build_dashboard.py</code> after each session. <span id="unmapped"></span></footer>
+</div>
+<script>
+const D = {"exam": "Example Cloud Fundamentals", "code": "EX-100", "examText": "Sat 31 Oct 2026, 09:00", "examShort": "31 Oct", "today": "2026-10-14", "daysLeft": 17, "petey": "2 sessions behind. Catch up with a double on Sat. Clear the 🔥 first (2 open).", "sample": true, "domains": [{"n": "1", "name": "Cloud concepts", "weight": "24%"}, {"n": "2", "name": "Security and identity", "weight": "30%"}, {"n": "3", "name": "Storage and data services", "weight": "26%"}, {"n": "4", "name": "Billing and support", "weight": "20%"}], "objectives": [{"id": "1.1", "domain": "1", "scope": "Service models; shared responsibility", "planned": "2026-10-01", "status": "solid", "quiz": 7, "quizOf": 7, "interleaved": null, "date": "2026-10-01", "entries": 1, "open": 0, "solidEntries": 1, "dueNow": 0, "fire": 0, "score": 100, "items": [{"t": "Who patches the guest OS on a rented virtual machine?", "s": "solid", "d": false, "f": false}]}, {"id": "1.2", "domain": "1", "scope": "Regions, zones, edge locations", "planned": "2026-10-02", "status": "solid", "quiz": 6, "quizOf": 7, "interleaved": "3/3", "date": "2026-10-02", "entries": 1, "open": 1, "solidEntries": 0, "dueNow": 1, "fire": 0, "score": 71, "items": [{"t": "Zone vs region failure scope", "s": "once", "d": true, "f": false}]}, {"id": "1.3a", "domain": "1", "scope": "Scaling and elasticity", "planned": "2026-10-03", "status": "shaky", "quiz": 5, "quizOf": 7, "interleaved": "3/3", "date": "2026-10-03", "entries": 2, "open": 2, "solidEntries": 0, "dueNow": 2, "fire": 1, "score": 53, "items": [{"t": "Scaling out vs scaling up", "s": "new", "d": true, "f": true}, {"t": "Elasticity vs scalability wording", "s": "once", "d": true, "f": false}]}, {"id": "1.3b", "domain": "1", "scope": "High availability and disaster recovery", "planned": "2026-10-03", "status": "solid", "quiz": 6, "quizOf": 7, "interleaved": "3/3", "date": "2026-10-03", "entries": 1, "open": 0, "solidEntries": 1, "dueNow": 1, "fire": 0, "score": 91, "items": [{"t": "RPO vs RTO", "s": "solid", "d": true, "f": false}]}, {"id": "2.1a", "domain": "2", "scope": "Identities, roles, least privilege", "planned": "2026-10-05", "status": "solid", "quiz": 7, "quizOf": 7, "interleaved": "2/3", "date": "2026-10-05", "entries": 1, "open": 1, "solidEntries": 0, "dueNow": 1, "fire": 0, "score": 80, "items": [{"t": "Least privilege applied to a temporary task", "s": "once", "d": true, "f": false}]}, {"id": "2.1b", "domain": "2", "scope": "Authentication methods; MFA; federation", "planned": "2026-10-06", "status": "shaky", "quiz": 4, "quizOf": 7, "interleaved": "3/3", "date": "2026-10-06", "entries": 2, "open": 2, "solidEntries": 0, "dueNow": 2, "fire": 1, "score": 34, "items": [{"t": "MFA factor categories", "s": "new", "d": true, "f": true}, {"t": "Federation vs single sign-on", "s": "new", "d": true, "f": false}]}, {"id": "2.2", "domain": "2", "scope": "Encryption at rest and in transit; key management", "planned": "2026-10-07", "status": "solid", "quiz": 6, "quizOf": 7, "interleaved": "3/3", "date": "2026-10-07", "entries": 1, "open": 1, "solidEntries": 0, "dueNow": 1, "fire": 0, "score": 51, "items": [{"t": "Customer-managed vs provider-managed keys", "s": "new", "d": true, "f": false}]}, {"id": "2.3", "domain": "2", "scope": "Network controls; logging and monitoring", "planned": "2026-10-08", "status": "solid", "quiz": 6, "quizOf": 7, "interleaved": "2/3", "date": "2026-10-08", "entries": 0, "open": 0, "solidEntries": 0, "dueNow": 0, "fire": 0, "score": 91, "items": []}, {"id": "3.1", "domain": "3", "scope": "Object, block and file storage; storage tiers", "planned": "2026-10-10", "status": "solid", "quiz": 6, "quizOf": 7, "interleaved": "3/3", "date": "2026-10-10", "entries": 1, "open": 1, "solidEntries": 0, "dueNow": 1, "fire": 0, "score": 71, "items": [{"t": "Archive tier retrieval time", "s": "once", "d": true, "f": false}]}, {"id": "3.2", "domain": "3", "scope": "Relational vs non-relational databases", "planned": "2026-10-12", "status": "paused", "quiz": null, "quizOf": null, "interleaved": null, "date": "2026-10-12", "entries": 0, "open": 0, "solidEntries": 0, "dueNow": 0, "fire": 0, "score": null, "items": []}, {"id": "3.3", "domain": "3", "scope": "Backups, snapshots, data lifecycle", "planned": "2026-10-13", "status": "todo", "quiz": null, "quizOf": null, "interleaved": null, "date": "", "entries": 0, "open": 0, "solidEntries": 0, "dueNow": 0, "fire": 0, "score": null, "items": []}, {"id": "4.1", "domain": "4", "scope": "Pricing models; cost tools and budgets", "planned": "2026-10-15", "status": "todo", "quiz": null, "quizOf": null, "interleaved": null, "date": "", "entries": 1, "open": 1, "solidEntries": 0, "dueNow": 0, "fire": 0, "score": null, "items": [{"t": "Reserved vs on-demand pricing", "s": "new", "d": false, "f": false}]}, {"id": "4.2", "domain": "4", "scope": "Support plans; service level agreements", "planned": "2026-10-17", "status": "todo", "quiz": null, "quizOf": null, "interleaved": null, "date": "", "entries": 0, "open": 0, "solidEntries": 0, "dueNow": 0, "fire": 0, "score": null, "items": []}], "totals": {"entries": 11, "due": 9, "solid": 2, "once": 4, "new": 5, "fire": 2}, "unmapped": [], "pace": {"start": "2026-10-01", "end": "2026-10-30", "elapsed": 14, "totalDays": 30, "taught": 9, "sessions": 13, "plannedByToday": 11, "gap": -2, "segments": [{"label": "D1", "domain": "1", "kind": "domain", "from": 0, "to": 3, "dates": "01 Oct – 03 Oct"}, {"label": "D2", "domain": "2", "kind": "domain", "from": 4, "to": 8, "dates": "05 Oct – 08 Oct"}, {"label": "D3", "domain": "3", "kind": "domain", "from": 9, "to": 13, "dates": "10 Oct – 13 Oct"}, {"label": "D4", "domain": "4", "kind": "domain", "from": 14, "to": 17, "dates": "15 Oct – 17 Oct"}, {"label": "Mocks", "kind": "mocks", "from": 20, "to": 27, "dates": "21 Oct – 27 Oct"}, {"label": "Buffer", "kind": "buffer", "from": 27, "to": 29, "dates": "28 Oct – 29 Oct"}, {"label": "Light", "kind": "light", "from": 29, "to": 30, "dates": "30 Oct"}], "todayPos": 14, "contentPos": 10.0, "phaseKinds": [["Mocks", "mocks"], ["Buffer", "buffer"], ["Light", "light"]]}};
+const band = s => s == null ? null : s >= 85 ? "strong" : s >= 70 ? "ok" : s >= 55 ? "mid" : "weak";
+const bandName = {strong: "Strong", ok: "OK", mid: "Shaky", weak: "Weak"};
+const plural = (n, w) => n + " " + w + (n === 1 ? "" : "s");
+const el = (tag, attrs = {}, kids = []) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) k === "text" ? n.textContent = v : n.setAttribute(k, v);
+  kids.forEach(k => n.append(k));
+  return n;
+};
+const objs = D.objectives;
+const taught = objs.filter(o => o.score != null);
+const T = D.totals;
+
+document.getElementById("h1").textContent = D.exam + (D.code ? " (" + D.code + ")" : "") + " progress";
+if (D.sample) document.getElementById("sample").append(el("span", {class: "sample", text: "SAMPLE · made-up data"}));
+if (D.petey) {
+  const says = document.getElementById("says");
+  says.append(el("b", {text: "Petey says: "}), document.createTextNode(D.petey));
+  says.hidden = false;
+}
+
+// Header figures
+const done = taught.length;
+const figs = [
+  ["Exam in", D.daysLeft >= 0 ? plural(D.daysLeft, "day") : "done", D.examText],
+  ["Sessions taught", done + " / " + objs.length, objs.filter(o => o.status === "solid").length + " ✅ · " + objs.filter(o => o.status === "shaky").length + " 🟡"],
+  ["MissLog due now", String(T.due), "of " + plural(T.entries, "entry").replace("entrys", "entries")],
+  ["Misses now solid", T.entries ? Math.round(100 * T.solid / T.entries) + "%" : "–", T.solid + " ✅ · " + T.once + " 🔁 · " + T.new + " 🆕" + (T.fire ? " · " + T.fire + " 🔥" : "")],
+];
+const figsEl = document.getElementById("figs");
+figs.forEach(([l, v, n]) => figsEl.append(el("div", {class: "fig"}, [el("div", {class: "l", text: l}), el("div", {class: "v", text: v}), el("div", {class: "n", text: n})])));
+
+// Pace timeline: planned phases, today, and where the plan would be for the sessions actually taught
+(() => {
+  const P = D.pace, box = document.getElementById("pace");
+  const fmt = iso => new Date(iso + "T00:00:00").toLocaleDateString(undefined, {day: "numeric", month: "short"});
+  const pct = d => (100 * d / P.totalDays) + "%";
+  box.append(el("h2", {text: "Timeline"}));
+  const bar = el("div", {class: "bar"});
+  P.segments.forEach(sg => {
+    const mine = sg.domain ? objs.filter(o => o.domain === sg.domain) : [];
+    const isDone = mine.length > 0 && mine.every(o => o.score != null);
+    const n = el("div", {class: "seg " + sg.kind + (isDone ? " done" : ""), title: sg.label + ": " + sg.dates, text: sg.label});
+    n.style.left = pct(sg.from);
+    n.style.width = pct(sg.to - sg.from);
+    bar.append(n);
+  });
+  const tl = el("div", {class: "tl"}, [bar]);
+  const pin = (cls, pos, label) => { const p = el("div", {class: "pin " + cls}, [el("span", {text: label})]); p.style.left = pct(pos); return p; };
+  const days = Math.round((P.contentPos - P.todayPos) * 10) / 10;
+  tl.append(pin("today", P.todayPos, "Today"));
+  tl.append(pin("content" + (days < 0 ? " behind" : ""), P.contentPos, "Content reached"));
+  tl.append(el("div", {class: "ends"}, [el("span", {text: fmt(P.start)}), el("span", {text: fmt(P.end) + " · exam " + D.examShort})]));
+  box.append(tl);
+  const key = [["k-done", "domain taught"], ["k-domain", "domain planned"]];
+  const known = ["mocks", "buffer", "light"];
+  P.phaseKinds.forEach(([label, kind]) => key.push(["k-" + (known.includes(kind) ? kind : "phase"), label.toLowerCase()]));
+  box.append(el("div", {class: "tlkey"}, key.map(([cls, text]) => el("span", {}, [el("i", {class: cls}), document.createTextNode(text)]))));
+  const g = P.gap, v = el("div", {class: "verdict"});
+  v.append(el("b", {text: g > 0 ? plural(g, "session") + " ahead" : g < 0 ? plural(-g, "session") + " behind" : "On schedule"}));
+  v.append(document.createTextNode(" · " + P.taught + " of " + P.sessions + " sessions taught; the plan had " + P.plannedByToday + " done by the end of today. " +
+    "Content reached is where the plan would be for the sessions taught" + (days ? " (" + plural(Math.abs(days), "day") + (days < 0 ? " behind today)." : " ahead of today).") : ", level with today.") +
+    " Time used: day " + P.elapsed + " of " + P.totalDays + "."));
+  box.append(v);
+})();
+
+// Takeaway
+const weakest = [...taught].sort((a, b) => a.score - b.score);
+const next = objs.find(o => o.status === "todo" || o.status === "paused");
+document.getElementById("takeaway").textContent =
+  done + " of " + objs.length + " sessions taught." +
+  (weakest.length ? " Weakest so far: " + weakest.slice(0, 2).map(o => o.id + " (" + o.score + ")").join(" and ") + "." : "") +
+  " " + plural(T.due, "MissLog review") + " due." + (next ? " Next up: " + next.id + "." : "");
+
+// Matrix
+const matrix = document.getElementById("matrix");
+const cellsById = {};
+D.domains.forEach(d => {
+  const mine = objs.filter(o => o.domain === d.n);
+  const ts = mine.filter(o => o.score != null);
+  const avg = ts.length ? Math.round(ts.reduce((s, o) => s + o.score, 0) / ts.length) : null;
+  const label = el("div", {class: "dlabel"}, [
+    el("b", {text: "Domain " + d.n + " · " + d.weight}),
+    el("span", {text: d.name + (avg != null ? " · avg " + avg + " over " + ts.length + "/" + mine.length : " · not started")}),
+  ]);
+  const cells = el("div", {class: "cells"});
+  mine.forEach(o => {
+    const b = band(o.score);
+    const btn = el("button", {class: "cell" + (b ? "" : " todo"), type: "button", "aria-label": o.id + " " + (b ? bandName[b] + " " + o.score : "not started")});
+    if (b) btn.style.background = "var(--" + b + ")";
+    const top = el("span", {class: "top"}, [el("span", {class: "id", text: o.id})]);
+    if (o.open) top.append(el("span", {class: "badge", text: (o.fire ? "🔥" : "") + o.open + " open"}));
+    btn.append(top);
+    btn.append(el("span", {class: "sc", text: b ? o.score + " · " + o.quiz + "/" + o.quizOf : (o.status === "paused" ? "paused" : "—")}));
+    btn.addEventListener("click", () => show(o.id));
+    cells.append(btn);
+    cellsById[o.id] = btn;
+  });
+  matrix.append(el("div", {class: "drow"}, [label, cells]));
+});
+
+// Weakest list
+const wk = document.getElementById("weakest");
+if (!weakest.length) wk.append(el("p", {class: "note", text: "Nothing taught yet."}));
+weakest.forEach(o => {
+  const fill = el("div", {class: "fill"});
+  fill.style.width = o.score + "%";
+  fill.style.background = "var(--" + band(o.score) + ")";
+  const row = el("div", {class: "bar"}, [el("b", {text: o.id}), el("div", {class: "track"}, [fill]), el("span", {text: String(o.score)})]);
+  row.style.cursor = "pointer";
+  row.addEventListener("click", () => show(o.id));
+  wk.append(row);
+});
+
+// Detail panel
+const detail = document.getElementById("detail");
+const statusName = {solid: "✅ solid", shaky: "🟡 shaky", paused: "🔵 paused", todo: "⬜ not started"};
+function show(id) {
+  const o = objs.find(x => x.id === id);
+  if (!o) return;
+  Object.values(cellsById).forEach(c => c.classList.remove("sel"));
+  if (cellsById[id]) cellsById[id].classList.add("sel");
+  detail.replaceChildren();
+  detail.append(el("h3", {text: o.id + " · " + o.scope}));
+  const kv = el("div", {class: "kv"});
+  const add = (k, v) => kv.append(el("div", {}, [el("span", {text: k + " "}), document.createTextNode(v)]));
+  add("Status", statusName[o.status]);
+  if (o.score != null) add("Strength", o.score + " (" + bandName[band(o.score)] + ")");
+  if (o.quiz != null) add("Quiz", o.quiz + "/" + o.quizOf + (o.interleaved ? " (+" + o.interleaved + " interleaved)" : ""));
+  add("Taught", o.date || "planned " + o.planned);
+  add("MissLog", o.entries + " entries · " + o.solidEntries + " solid · " + o.dueNow + " due");
+  detail.append(kv);
+  if (o.items.length) {
+    const ul = el("ul", {class: "items"});
+    o.items.forEach(it => {
+      const tag = it.f ? "🔥 open" : it.d ? "due" : it.s === "solid" ? "✅ solid" : it.s === "once" ? "🔁 once" : "🆕 new";
+      ul.append(el("li", {class: it.f ? "fire" : it.d ? "due" : ""}, [el("em", {text: tag}), el("span", {text: it.t})]));
+    });
+    detail.append(ul);
+  } else {
+    detail.append(el("p", {class: "note", text: "No MissLog entries for this objective."}));
+  }
+}
+if (objs.length) show((weakest[0] || next || objs[0]).id);
+if (D.unmapped.length) document.getElementById("unmapped").textContent = plural(D.unmapped.length, "MissLog entry").replace("entrys", "entries") + " not mapped to an objective (add an **Objective:** line).";
+</script>
+</body>
+</html>

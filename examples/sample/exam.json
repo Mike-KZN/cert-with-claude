@@ -1,0 +1,16 @@
+{
+  "_comment": "SAMPLE with made-up data for a fictional exam. 'today' and 'sample' are only for this example; don't set them in your own exam.json.",
+  "exam_name": "Example Cloud Fundamentals",
+  "exam_code": "EX-100",
+  "exam_date": "2026-10-31",
+  "exam_time": "09:00",
+  "day0": "2026-10-01",
+  "today": "2026-10-14",
+  "sample": true,
+  "phases": [
+    {"label": "Mocks", "kind": "mocks", "from": "2026-10-21", "to": "2026-10-27"},
+    {"label": "Buffer", "kind": "buffer", "from": "2026-10-28", "to": "2026-10-29"},
+    {"label": "Light", "kind": "light", "from": "2026-10-30", "to": "2026-10-30"}
+  ],
+  "petey_status": true
+}

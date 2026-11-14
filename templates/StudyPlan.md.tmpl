@@ -1,0 +1,50 @@
+# {{exam_name}} ({{exam_code}}) study plan
+
+**Exam:** {{exam_datetime_text}}. {{exam_format}}.
+**Window:** day 0 = {{day0}} → exam {{exam_date}} ({{window_days}} days).
+**Time budget:** {{time_budget}}
+**Background:** {{background}}
+
+## Domain weightings (official guide, {{guide_version}})
+
+| Domain | Weight |
+|---|---|
+{{weight_rows}}
+
+## Approach
+
+The Cert PT loop (rules in `petey/method.md`): warm-up (spaced review) → orient + guess → teach → fact card → explain it back → quiz (7 + 3 interleaved, with confidence ratings) → repair (→ `MissLog.md`) → close out. One session per tracker row, ~60-80 min, {{session_count}} sessions. Day-by-day dates: `ObjectiveTracker.md`.
+
+## Phases
+
+| Dates | Phase | What |
+|---|---|---|
+{{phase_rows}}
+
+If a domain runs over, borrow from the buffer, not the mock phase. Once every objective is taught, the mock phase runs in **retrieval mode** (warm-up → timed questions → fast repair; see `petey/method.md`).
+
+## Hot topics
+
+Topics that pass reports or other learners say came up, mapped to the guide bullet each fits. Guide bullets are broader than their wording: a topic the guide never names can still be tested. Every row gets at least one fact card when its bullet is taught. Add rows as you find reports; note the source and don't treat a single report as exam statistics.
+
+| Topic | Source | Guide bullet it fits | Carded |
+|---|---|---|---|
+{{hot_topic_rows}}
+
+## Readiness checkpoints
+
+- **After each domain:** {{domain_check}}. Score it by official objective (taught / untaught / doubtful key), not by the bank's domain tags.
+- **Mock phase:** {{mock_plan}}. Do a full repair pass after each.
+- **Readiness gate:** {{readiness_gate}}
+
+## Exam-day tactics
+
+- Flag and return: don't sink time into one question. Feeling like you're failing midway is normal.
+- Name the qualifiers first (edition/tier, default vs maximum, the exact object type) before reading the options.
+- Only change an answer if you can name the specific fact that makes the first choice wrong.
+- On numbers: when stuck between a round number and an odd one, the round one is often the distractor.
+- Answer every question if there's no penalty for wrong answers (check the exam's rules).
+
+## Resources
+
+{{resources}}
